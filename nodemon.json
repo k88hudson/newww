@@ -1,0 +1,11 @@
+{
+   "script": "server.js",
+    "ext": "hbs js",
+    "ignore": [
+        "assets/",
+        "facets/*/test/",
+        "node_modules/",
+        "static/",
+        "test/"
+    ]
+}

@@ -7,10 +7,27 @@
     "start": "node server.js",
     "test": "lab --verbose --colors --ignore '$$bole,__grim__' --assert code --timeout 5000",
     "coverage": "npm test -- --reporter html > test/coverage.html && open test/coverage.html",
-    "prepublish": "gulp build",
-    "dev": "gulp dev",
     "dev-db": "node dev/go.js",
-    "repl": "rc /tmp/repl/www-15443.sock"
+    "repl": "rc /tmp/repl/www-15443.sock",
+
+    "watch": "npm-run-all --parallel watch:*",
+    "prepublish": "npm-run-all build:*",
+    "dev": "npm run prepublish && npm-run-all --parallel watch:* nodemon",
+
+    "build:static": "cpx \"./assets/{fonts,images,misc}/**/*\" static",
+    "watch:static": "npm run build:static -- -w",
+
+    "build:css": "stylus ./assets/styles/index.styl -u nib -o static/css",
+    "watch:css": "npm run build:css -- -w",
+
+    "build:js": "browserify ./assets/scripts/index.js -o static/js/index.min.js",
+    "watch:js": "watchify ./assets/scripts/index.js -o static/js/index.min.js",
+
+    "watch:vendor": "catw \"./assets/scripts/vendor/*.js\" -o static/js/vendor.min.js",
+    "build:vendor": "npm run watch:vendor -- --watch false",
+
+    "nodemon": "nodemon | bistre",
+    "lint": "jshint {assets/scripts,adapters,facets,lib,locales,presenters,services,test}"
   },
   "author": "npm, Inc. <support@npmjs.com>",
   "license": "ISC",
@@ -94,7 +111,9 @@
   "devDependencies": {
     "bistre": "^1.0.0",
     "browserify": "^5.8.0",
+    "catw": "^0.2.0",
     "code": "^1.2.1",
+    "cpx": "^1.1.5",
     "dotenv": "^0.4.0",
     "favicons": "^3.0.2",
     "grunt": "^0.4.5",
@@ -111,6 +130,7 @@
     "lodash": "^2.4.1",
     "nock": "^1.2.0",
     "nodemailer-mock-transport": "^1.1.0",
+    "npm-run-all": "^1.2.2",
     "once": "^1.3.0",
     "replicate": "^0.2.0",
     "sinon": "^1.10.3",
