@@ -9,23 +9,18 @@
     "coverage": "npm test -- --reporter html > test/coverage.html && open test/coverage.html",
     "dev-db": "node dev/go.js",
     "repl": "rc /tmp/repl/www-15443.sock",
-
     "watch": "npm-run-all --parallel watch:*",
     "prepublish": "npm-run-all build:*",
     "dev": "npm run prepublish && npm-run-all --parallel watch:* nodemon",
-
     "build:static": "cpx \"./assets/{fonts,images,misc}/**/*\" static",
     "watch:static": "npm run build:static -- -w",
-
     "build:css": "stylus ./assets/styles/index.styl -u nib -o static/css",
     "watch:css": "npm run build:css -- -w",
-
-    "build:js": "browserify ./assets/scripts/index.js -o static/js/index.min.js",
+    "build:js": "browserify ./assets/scripts/index.js | uglifyjs > static/js/index.min.js",
     "watch:js": "watchify ./assets/scripts/index.js -o static/js/index.min.js",
-
     "watch:vendor": "catw \"./assets/scripts/vendor/*.js\" -o static/js/vendor.min.js",
-    "build:vendor": "npm run watch:vendor -- --watch false",
-
+    "build:vendor": "catw \"./assets/scripts/vendor/*.js\" -o static/js/vendor.min.js --watch false",
+    "postbuild:vendor": "uglifyjs static/js/vendor.min.js -c > static/js/vendor.min.js",
     "nodemon": "nodemon | bistre",
     "lint": "jshint {assets/scripts,adapters,facets,lib,locales,presenters,services,test}"
   },
@@ -111,7 +106,7 @@
   "devDependencies": {
     "bistre": "^1.0.0",
     "browserify": "^5.8.0",
-    "catw": "^0.2.0",
+    "catw": "^1.0.0",
     "code": "^1.2.1",
     "cpx": "^1.1.5",
     "dotenv": "^0.4.0",
@@ -135,6 +130,7 @@
     "replicate": "^0.2.0",
     "sinon": "^1.10.3",
     "touch": "0.0.3",
+    "uglify-js": "^2.4.6",
     "vinyl-source-stream": "^0.1.1"
   }
 }
